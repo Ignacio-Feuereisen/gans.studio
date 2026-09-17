@@ -36,9 +36,9 @@
       align-items: center;
       justify-content: center;
 
-      /* Fade for the whole logo + text */
+      /* 1 second fade in/out */
       opacity: 1;
-      transition: opacity 0.5s ease;
+      transition: opacity 1s ease;
     }
 
     .container.hidden {
@@ -58,23 +58,23 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Logo grows when mouse is over it */
+    /* Grow to 103% when mouse is over the logo */
     .logo:hover {
-      transform: scale(1.05);
+      transform: scale(1.03);
     }
 
-    /* Small shrink after mouse leaves */
+    /* Shrink to 98%, then return to normal */
     .logo.mouse-out {
       animation: logo-pop-back 0.35s ease-out;
     }
 
     @keyframes logo-pop-back {
       0% {
-        transform: scale(1.05);
+        transform: scale(1.03);
       }
 
       45% {
-        transform: scale(0.97);
+        transform: scale(0.98);
       }
 
       100% {
@@ -118,28 +118,44 @@
     const logo = document.getElementById("logo");
 
     /*
-      CLICK:
-      Fade logo + text out.
-      After 5 seconds, fade them back in.
+      CLICK SEQUENCE:
+
+      0–1 seconds:
+      Logo + text fade out.
+
+      1–4 seconds:
+      Completely invisible.
+
+      4–5 seconds:
+      Logo + text fade back in.
     */
+
     logo.addEventListener("click", function () {
+
+      // Start 1-second fade out
       sign.classList.add("hidden");
 
+      // After 4 seconds from the click,
+      // start the 1-second fade back in
       setTimeout(function () {
         sign.classList.remove("hidden");
-      }, 5000);
+      }, 4000);
+
     });
 
 
     /*
       MOUSE OUT:
-      Logo goes slightly smaller than normal,
-      then pops back to its original size.
+
+      Logo shrinks slightly to 98%,
+      then pops back to 100%.
     */
+
     logo.addEventListener("mouseleave", function () {
+
       logo.classList.remove("mouse-out");
 
-      // Restart animation
+      // Force browser to restart the animation
       void logo.offsetWidth;
 
       logo.classList.add("mouse-out");
@@ -147,6 +163,7 @@
       setTimeout(function () {
         logo.classList.remove("mouse-out");
       }, 350);
+
     });
   </script>
 
