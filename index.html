@@ -41,6 +41,13 @@
       width: min(55vw, 420px);
       height: auto;
       display: block;
+      cursor: pointer;
+      transition: opacity 0.5s ease;
+    }
+
+    .logo.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .name {
@@ -65,6 +72,7 @@
       src="logo.png"
       alt="GANS logo"
       class="logo"
+      id="logo"
     >
 
     <div class="name">
@@ -72,6 +80,18 @@
     </div>
 
   </main>
+
+  <script>
+    const logo = document.getElementById("logo");
+
+    logo.addEventListener("click", function () {
+      logo.classList.add("hidden");
+
+      setTimeout(function () {
+        logo.classList.remove("hidden");
+      }, 5000);
+    });
+  </script>
 
 </body>
 </html>
