@@ -35,19 +35,15 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .logo {
       width: min(55vw, 420px);
       height: auto;
       display: block;
-      cursor: pointer;
-      transition: opacity 0.5s ease;
-    }
-
-    .logo.hidden {
-      opacity: 0;
-      pointer-events: none;
     }
 
     .name {
@@ -61,18 +57,95 @@
     .dot {
       color: #BC4034;
     }
+
+    /* Fluorescent tube flicker */
+
+    .flicker {
+      animation: fluorescent-flicker 1.8s linear;
+    }
+
+    @keyframes fluorescent-flicker {
+
+      0% {
+        opacity: 1;
+      }
+
+      4% {
+        opacity: 0.15;
+      }
+
+      7% {
+        opacity: 0.85;
+      }
+
+      10% {
+        opacity: 0.05;
+      }
+
+      14% {
+        opacity: 1;
+      }
+
+      20% {
+        opacity: 0.3;
+      }
+
+      23% {
+        opacity: 1;
+      }
+
+      31% {
+        opacity: 0.1;
+      }
+
+      34% {
+        opacity: 0.75;
+      }
+
+      38% {
+        opacity: 0.05;
+      }
+
+      42% {
+        opacity: 1;
+      }
+
+      55% {
+        opacity: 1;
+      }
+
+      58% {
+        opacity: 0.2;
+      }
+
+      61% {
+        opacity: 1;
+      }
+
+      64% {
+        opacity: 0.45;
+      }
+
+      67% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
   </style>
 </head>
 
 <body>
 
-  <main class="container">
+  <main class="container" id="sign">
 
     <img
       src="logo.png"
       alt="GANS logo"
       class="logo"
-      id="logo"
     >
 
     <div class="name">
@@ -82,14 +155,24 @@
   </main>
 
   <script>
-    const logo = document.getElementById("logo");
+    const sign = document.getElementById("sign");
 
-    logo.addEventListener("click", function () {
-      logo.classList.add("hidden");
+    sign.addEventListener("click", function () {
 
+      // Remove animation if it was previously triggered
+      sign.classList.remove("flicker");
+
+      // Force browser to reset the animation
+      void sign.offsetWidth;
+
+      // Start flickering
+      sign.classList.add("flicker");
+
+      // Clean up after animation finishes
       setTimeout(function () {
-        logo.classList.remove("hidden");
-      }, 5000);
+        sign.classList.remove("flicker");
+      }, 1800);
+
     });
   </script>
 
