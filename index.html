@@ -35,15 +35,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-
-      /* 1 second fade in/out */
       opacity: 1;
-      transition: opacity 1s ease;
-    }
-
-    .container.hidden {
-      opacity: 0;
-      pointer-events: none;
     }
 
     .logo {
@@ -58,12 +50,12 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Grow to 103% when mouse is over the logo */
+    /* Grow to 103% when hovering */
     .logo:hover {
       transform: scale(1.03);
     }
 
-    /* Shrink to 98%, then return to normal */
+    /* On mouse exit: shrink to 98%, then return to 100% */
     .logo.mouse-out {
       animation: logo-pop-back 0.35s ease-out;
     }
@@ -93,6 +85,118 @@
     .dot {
       color: #BC4034;
     }
+
+
+    /*
+      FADE-OUT + FLICKER
+
+      Total duration: 3 seconds.
+
+      First ~2 seconds:
+      Smooth gradual fading.
+
+      Last ~1 second:
+      The sign becomes unstable and flickers
+      while continuing toward complete darkness.
+    */
+
+    .container.fade-out {
+      pointer-events: none;
+      animation: fade-out-flicker 3s linear forwards;
+    }
+
+    @keyframes fade-out-flicker {
+
+      /* Smooth initial fading */
+      0% {
+        opacity: 1;
+      }
+
+      20% {
+        opacity: 0.90;
+      }
+
+      40% {
+        opacity: 0.78;
+      }
+
+      60% {
+        opacity: 0.62;
+      }
+
+      /* Flickering begins */
+      68% {
+        opacity: 0.52;
+      }
+
+      71% {
+        opacity: 0.22;
+      }
+
+      74% {
+        opacity: 0.48;
+      }
+
+      77% {
+        opacity: 0.18;
+      }
+
+      80% {
+        opacity: 0.40;
+      }
+
+      84% {
+        opacity: 0.12;
+      }
+
+      87% {
+        opacity: 0.32;
+      }
+
+      90% {
+        opacity: 0.08;
+      }
+
+      93% {
+        opacity: 0.22;
+      }
+
+      96% {
+        opacity: 0.04;
+      }
+
+      98% {
+        opacity: 0.12;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+
+    /*
+      FADE-IN
+
+      Smoothly returns from complete darkness
+      to full visibility in 1 second.
+    */
+
+    .container.fade-in {
+      pointer-events: none;
+      animation: fade-in 1s ease forwards;
+    }
+
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
   </style>
 </head>
 
@@ -113,45 +217,84 @@
 
   </main>
 
+
   <script>
     const sign = document.getElementById("sign");
     const logo = document.getElementById("logo");
 
+    let animationRunning = false;
+
+
     /*
-      CLICK SEQUENCE:
+      CLICK SEQUENCE
 
-      0–1 seconds:
-      Logo + text fade out.
+      0–3 seconds:
+      Gradual fade-out.
+      Flickering becomes stronger near the end.
 
-      1–4 seconds:
+      3–6 seconds:
       Completely invisible.
 
-      4–5 seconds:
-      Logo + text fade back in.
+      6–7 seconds:
+      Smooth fade-in.
     */
 
     logo.addEventListener("click", function () {
 
-      // Start 1-second fade out
-      sign.classList.add("hidden");
+      if (animationRunning) return;
 
-      // After 4 seconds from the click,
-      // start the 1-second fade back in
+      animationRunning = true;
+
+      // Begin 3-second fade-out + flicker
+      sign.classList.add("fade-out");
+
+
+      // After 3 seconds:
+      // fade-out has finished and sign is invisible
       setTimeout(function () {
-        sign.classList.remove("hidden");
-      }, 4000);
+
+        sign.classList.remove("fade-out");
+        sign.style.opacity = "0";
+
+      }, 3000);
+
+
+      // After another 3 seconds:
+      // begin the 1-second fade-in
+      setTimeout(function () {
+
+        sign.classList.add("fade-in");
+
+      }, 6000);
+
+
+      // At 7 seconds:
+      // animation is finished and everything resets
+      setTimeout(function () {
+
+        sign.classList.remove("fade-in");
+        sign.style.opacity = "1";
+
+        animationRunning = false;
+
+      }, 7000);
 
     });
 
 
     /*
-      MOUSE OUT:
+      MOUSE OUT
 
-      Logo shrinks slightly to 98%,
-      then pops back to 100%.
+      103% while hovering
+          ↓
+      98% briefly
+          ↓
+      100% normal size
     */
 
     logo.addEventListener("mouseleave", function () {
+
+      if (animationRunning) return;
 
       logo.classList.remove("mouse-out");
 
@@ -165,6 +308,7 @@
       }, 350);
 
     });
+
   </script>
 
 </body>
