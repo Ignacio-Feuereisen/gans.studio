@@ -35,15 +35,51 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
+
+      /* Fade for the whole logo + text */
+      opacity: 1;
+      transition: opacity 0.5s ease;
+    }
+
+    .container.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .logo {
       width: min(55vw, 420px);
       height: auto;
       display: block;
+      cursor: pointer;
+
+      transform: scale(1);
+      transition: transform 0.18s ease-out;
+
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Logo grows when mouse is over it */
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    /* Small shrink after mouse leaves */
+    .logo.mouse-out {
+      animation: logo-pop-back 0.35s ease-out;
+    }
+
+    @keyframes logo-pop-back {
+      0% {
+        transform: scale(1.05);
+      }
+
+      45% {
+        transform: scale(0.97);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     .name {
@@ -57,84 +93,6 @@
     .dot {
       color: #BC4034;
     }
-
-    /* Fluorescent tube flicker */
-
-    .flicker {
-      animation: fluorescent-flicker 1.8s linear;
-    }
-
-    @keyframes fluorescent-flicker {
-
-      0% {
-        opacity: 1;
-      }
-
-      4% {
-        opacity: 0.15;
-      }
-
-      7% {
-        opacity: 0.85;
-      }
-
-      10% {
-        opacity: 0.05;
-      }
-
-      14% {
-        opacity: 1;
-      }
-
-      20% {
-        opacity: 0.3;
-      }
-
-      23% {
-        opacity: 1;
-      }
-
-      31% {
-        opacity: 0.1;
-      }
-
-      34% {
-        opacity: 0.75;
-      }
-
-      38% {
-        opacity: 0.05;
-      }
-
-      42% {
-        opacity: 1;
-      }
-
-      55% {
-        opacity: 1;
-      }
-
-      58% {
-        opacity: 0.2;
-      }
-
-      61% {
-        opacity: 1;
-      }
-
-      64% {
-        opacity: 0.45;
-      }
-
-      67% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 1;
-      }
-    }
-
   </style>
 </head>
 
@@ -146,6 +104,7 @@
       src="logo.png"
       alt="GANS logo"
       class="logo"
+      id="logo"
     >
 
     <div class="name">
@@ -156,23 +115,38 @@
 
   <script>
     const sign = document.getElementById("sign");
+    const logo = document.getElementById("logo");
 
-    sign.addEventListener("click", function () {
+    /*
+      CLICK:
+      Fade logo + text out.
+      After 5 seconds, fade them back in.
+    */
+    logo.addEventListener("click", function () {
+      sign.classList.add("hidden");
 
-      // Remove animation if it was previously triggered
-      sign.classList.remove("flicker");
-
-      // Force browser to reset the animation
-      void sign.offsetWidth;
-
-      // Start flickering
-      sign.classList.add("flicker");
-
-      // Clean up after animation finishes
       setTimeout(function () {
-        sign.classList.remove("flicker");
-      }, 1800);
+        sign.classList.remove("hidden");
+      }, 5000);
+    });
 
+
+    /*
+      MOUSE OUT:
+      Logo goes slightly smaller than normal,
+      then pops back to its original size.
+    */
+    logo.addEventListener("mouseleave", function () {
+      logo.classList.remove("mouse-out");
+
+      // Restart animation
+      void logo.offsetWidth;
+
+      logo.classList.add("mouse-out");
+
+      setTimeout(function () {
+        logo.classList.remove("mouse-out");
+      }, 350);
     });
   </script>
 
