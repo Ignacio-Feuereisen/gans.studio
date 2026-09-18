@@ -6,6 +6,9 @@
 
   <title>gans.studio</title>
 
+  <!-- Browser tab icon / favicon -->
+  <link rel="icon" type="image/png" href="logo.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -96,8 +99,7 @@
       Smooth gradual fading.
 
       Last ~1 second:
-      The sign becomes unstable and flickers
-      while continuing toward complete darkness.
+      Increasing flickering until darkness.
     */
 
     .container.fade-out {
@@ -107,7 +109,6 @@
 
     @keyframes fade-out-flicker {
 
-      /* Smooth initial fading */
       0% {
         opacity: 1;
       }
@@ -125,6 +126,7 @@
       }
 
       /* Flickering begins */
+
       68% {
         opacity: 0.52;
       }
@@ -178,8 +180,7 @@
     /*
       FADE-IN
 
-      Smoothly returns from complete darkness
-      to full visibility in 1 second.
+      Smooth 1-second return to full visibility.
     */
 
     .container.fade-in {
@@ -229,8 +230,7 @@
       CLICK SEQUENCE
 
       0–3 seconds:
-      Gradual fade-out.
-      Flickering becomes stronger near the end.
+      Gradual fade-out with flickering near the end.
 
       3–6 seconds:
       Completely invisible.
@@ -250,7 +250,7 @@
 
 
       // After 3 seconds:
-      // fade-out has finished and sign is invisible
+      // sign is completely invisible
       setTimeout(function () {
 
         sign.classList.remove("fade-out");
@@ -259,8 +259,8 @@
       }, 3000);
 
 
-      // After another 3 seconds:
-      // begin the 1-second fade-in
+      // After 6 seconds:
+      // begin 1-second fade-in
       setTimeout(function () {
 
         sign.classList.add("fade-in");
@@ -268,8 +268,8 @@
       }, 6000);
 
 
-      // At 7 seconds:
-      // animation is finished and everything resets
+      // After 7 seconds:
+      // reset everything
       setTimeout(function () {
 
         sign.classList.remove("fade-in");
@@ -298,7 +298,7 @@
 
       logo.classList.remove("mouse-out");
 
-      // Force browser to restart the animation
+      // Force browser to restart animation
       void logo.offsetWidth;
 
       logo.classList.add("mouse-out");
