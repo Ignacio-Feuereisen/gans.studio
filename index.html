@@ -25,19 +25,33 @@
     }
 
     body {
+      width: 100%;
       min-height: 100vh;
+      overflow: hidden;
       background: #111111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       font-family: "Quicksand", sans-serif;
     }
 
+    /*
+      The sign contains both the logo and text.
+
+      It begins exactly in the center of the screen.
+      JavaScript changes its position after each click.
+    */
+
     .container {
+      position: fixed;
+
+      left: 50%;
+      top: 50%;
+
+      transform: translate(-50%, -50%);
+
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+
       opacity: 1;
     }
 
@@ -45,6 +59,7 @@
       width: min(55vw, 420px);
       height: auto;
       display: block;
+
       cursor: pointer;
 
       transform: scale(1);
@@ -53,17 +68,31 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Grow to 103% when hovering */
+
+    /*
+      HOVER
+
+      Logo grows from 100% to 103%.
+    */
+
     .logo:hover {
       transform: scale(1.03);
     }
 
-    /* On mouse exit: shrink to 98%, then return to 100% */
+
+    /*
+      MOUSE LEAVE
+
+      Logo briefly shrinks to 98%,
+      then returns to 100%.
+    */
+
     .logo.mouse-out {
       animation: logo-pop-back 0.35s ease-out;
     }
 
     @keyframes logo-pop-back {
+
       0% {
         transform: scale(1.03);
       }
@@ -77,12 +106,20 @@
       }
     }
 
+
+    /*
+      TEXT
+    */
+
     .name {
       margin-top: 28px;
+
       font-size: clamp(24px, 4vw, 38px);
       font-weight: 500;
       letter-spacing: 0.08em;
+
       color: white;
+      white-space: nowrap;
     }
 
     .dot {
@@ -91,20 +128,20 @@
 
 
     /*
-      FADE-OUT + FLICKER
+      FADE OUT + FLICKER
 
-      Total duration: 3 seconds.
+      Total: 3 seconds.
 
-      First ~2 seconds:
-      Smooth gradual fading.
-
-      Last ~1 second:
-      Increasing flickering until darkness.
+      The first part fades gradually.
+      During approximately the final second,
+      the sign begins flickering before dying out.
     */
 
     .container.fade-out {
       pointer-events: none;
-      animation: fade-out-flicker 3s linear forwards;
+
+      animation:
+        fade-out-flicker 3s linear forwards;
     }
 
     @keyframes fade-out-flicker {
@@ -124,6 +161,7 @@
       60% {
         opacity: 0.62;
       }
+
 
       /* Flickering begins */
 
@@ -178,17 +216,20 @@
 
 
     /*
-      FADE-IN
+      FADE IN
 
-      Smooth 1-second return to full visibility.
+      The sign fades back into its NEW
+      random location over 1 second.
     */
 
     .container.fade-in {
       pointer-events: none;
+
       animation: fade-in 1s ease forwards;
     }
 
     @keyframes fade-in {
+
       0% {
         opacity: 0;
       }
@@ -200,6 +241,7 @@
 
   </style>
 </head>
+
 
 <body>
 
@@ -220,6 +262,7 @@
 
 
   <script>
+
     const sign = document.getElementById("sign");
     const logo = document.getElementById("logo");
 
@@ -227,16 +270,95 @@
 
 
     /*
+      RANDOM POSITION FUNCTION
+
+      Finds a random position while making sure
+      the ENTIRE logo + text remains visible.
+
+      A 20px safety margin is maintained around
+      the edges of the browser window.
+    */
+
+    function moveToRandomPosition() {
+
+      const margin = 20;
+
+      /*
+        Temporarily remove translate(-50%, -50%)
+        because from this point onward we position
+        the sign using its top-left corner.
+      */
+
+      sign.style.transform = "none";
+
+
+      /*
+        Measure the complete sign:
+        logo + text.
+      */
+
+      const signWidth = sign.offsetWidth;
+      const signHeight = sign.offsetHeight;
+
+
+      /*
+        Calculate how much usable screen space exists.
+      */
+
+      const maxX =
+        Math.max(margin, window.innerWidth - signWidth - margin);
+
+      const maxY =
+        Math.max(margin, window.innerHeight - signHeight - margin);
+
+
+      /*
+        Choose random coordinates inside the
+        safe area of the screen.
+      */
+
+      const randomX =
+        margin + Math.random() * Math.max(0, maxX - margin);
+
+      const randomY =
+        margin + Math.random() * Math.max(0, maxY - margin);
+
+
+      /*
+        Move the whole sign.
+      */
+
+      sign.style.left = randomX + "px";
+      sign.style.top = randomY + "px";
+    }
+
+
+
+    /*
       CLICK SEQUENCE
 
-      0–3 seconds:
-      Gradual fade-out with flickering near the end.
 
-      3–6 seconds:
-      Completely invisible.
+      0–3 SECONDS
 
-      6–7 seconds:
-      Smooth fade-in.
+      Logo + text gradually fade away.
+
+      During the final part they flicker.
+
+
+      3–6 SECONDS
+
+      Completely black / invisible.
+
+
+      AT 6 SECONDS
+
+      While invisible, the logo + text
+      move to a new random location.
+
+
+      6–7 SECONDS
+
+      Logo + text fade into the new position.
     */
 
     logo.addEventListener("click", function () {
@@ -245,34 +367,58 @@
 
       animationRunning = true;
 
-      // Begin 3-second fade-out + flicker
+
+      /*
+        Start fade-out.
+      */
+
       sign.classList.add("fade-out");
 
 
-      // After 3 seconds:
-      // sign is completely invisible
+      /*
+        After 3 seconds the sign has
+        completely disappeared.
+      */
+
       setTimeout(function () {
 
         sign.classList.remove("fade-out");
+
         sign.style.opacity = "0";
 
       }, 3000);
 
 
-      // After 6 seconds:
-      // begin 1-second fade-in
+      /*
+        After 6 seconds:
+
+        The sign has now been completely
+        invisible for 3 seconds.
+
+        Move it while invisible, then
+        begin fading it back in.
+      */
+
       setTimeout(function () {
+
+        moveToRandomPosition();
 
         sign.classList.add("fade-in");
 
       }, 6000);
 
 
-      // After 7 seconds:
-      // reset everything
+      /*
+        After 7 seconds:
+
+        Fade-in is finished.
+        Restore normal interactive state.
+      */
+
       setTimeout(function () {
 
         sign.classList.remove("fade-in");
+
         sign.style.opacity = "1";
 
         animationRunning = false;
@@ -282,14 +428,15 @@
     });
 
 
-    /*
-      MOUSE OUT
 
-      103% while hovering
-          ↓
-      98% briefly
-          ↓
-      100% normal size
+    /*
+      MOUSE LEAVE EFFECT
+
+      Hover:
+          100% → 103%
+
+      Mouse leaves:
+          103% → 98% → 100%
     */
 
     logo.addEventListener("mouseleave", function () {
@@ -298,13 +445,21 @@
 
       logo.classList.remove("mouse-out");
 
-      // Force browser to restart animation
+
+      /*
+        Force browser to restart animation.
+      */
+
       void logo.offsetWidth;
+
 
       logo.classList.add("mouse-out");
 
+
       setTimeout(function () {
+
         logo.classList.remove("mouse-out");
+
       }, 350);
 
     });
